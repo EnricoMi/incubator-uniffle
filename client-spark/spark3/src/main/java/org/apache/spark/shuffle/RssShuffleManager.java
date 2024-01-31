@@ -505,6 +505,7 @@ public class RssShuffleManager extends RssShuffleManagerBase {
     return new RssShuffleWriter<>(
         rssHandle.getAppId(),
         shuffleId,
+        context.partitionId(),
         taskId,
         context.taskAttemptId(),
         writeMetrics,
