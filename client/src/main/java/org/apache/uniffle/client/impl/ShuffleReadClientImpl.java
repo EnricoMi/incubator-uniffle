@@ -149,18 +149,6 @@ public class ShuffleReadClientImpl implements ShuffleReadClient {
       request.enableOffHeap();
     }
 
-    List<Long> removeBlockIds = Lists.newArrayList();
-    blockIdBitmap.forEach(
-        bid -> {
-          if (!taskIdBitmap.contains(idHelper.getTaskAttemptId(bid))) {
-            removeBlockIds.add(bid);
-          }
-        });
-
-    for (long rid : removeBlockIds) {
-      blockIdBitmap.removeLong(rid);
-    }
-
     // copy blockIdBitmap to track all pending blocks
     pendingBlockIds = RssUtils.cloneBitMap(blockIdBitmap);
 
