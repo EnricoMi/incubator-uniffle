@@ -762,7 +762,7 @@ public class ShuffleWriteClientImpl implements ShuffleWriteClient {
             getShuffleServerClient(ssi).offerShuffleResult(request);
         if (response.getStatusCode() == StatusCode.SUCCESS) {
           LOG.info(
-              "Offer of report shuffle result to "
+              "Offer of shuffle result to "
                   + ssi
                   + " for appId["
                   + appId
@@ -778,7 +778,7 @@ public class ShuffleWriteClientImpl implements ShuffleWriteClient {
           // this is only needed when there are more than two concurrent map tasks or network
           // failures occur
           LOG.warn(
-              "Offer of report shuffle result to "
+              "Offer of shuffle result to "
                   + ssi
                   + " for appId["
                   + appId
@@ -789,7 +789,7 @@ public class ShuffleWriteClientImpl implements ShuffleWriteClient {
         }
       } catch (Exception e) {
         LOG.warn(
-            "Offer of report shuffle result is failed to "
+            "Offer of shuffle result is failed to "
                 + ssi
                 + " for appId["
                 + appId
