@@ -58,7 +58,16 @@ public abstract class ShuffleReadWriteBase extends IntegrationTestBase {
       Roaring64NavigableMap blockIdBitmap,
       Map<Long, byte[]> dataMap,
       List<ShuffleServerInfo> shuffleServerInfoList) {
-    return createShuffleBlockList(shuffleId, 0, partitionId, taskAttemptId, blockNum, length, blockIdBitmap, dataMap, shuffleServerInfoList);
+    return createShuffleBlockList(
+        shuffleId,
+        0,
+        partitionId,
+        taskAttemptId,
+        blockNum,
+        length,
+        blockIdBitmap,
+        dataMap,
+        shuffleServerInfoList);
   }
 
   public static List<ShuffleBlockInfo> createShuffleBlockList(
