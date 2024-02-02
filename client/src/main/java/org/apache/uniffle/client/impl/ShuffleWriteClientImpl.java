@@ -837,7 +837,7 @@ public class ShuffleWriteClientImpl implements ShuffleWriteClient {
             getShuffleServerClient(ssi).commitShuffleResult(request);
         if (response.getStatusCode() == StatusCode.SUCCESS) {
           LOG.info(
-              "Committing report shuffle result to "
+              "Committing shuffle result to "
                   + ssi
                   + " for appId["
                   + appId
@@ -849,7 +849,7 @@ public class ShuffleWriteClientImpl implements ShuffleWriteClient {
           }
         } else {
           LOG.warn(
-              "Committing report shuffle result to "
+              "Committing shuffle result to "
                   + ssi
                   + " for appId["
                   + appId
@@ -860,7 +860,7 @@ public class ShuffleWriteClientImpl implements ShuffleWriteClient {
         }
       } catch (Exception e) {
         LOG.warn(
-            "Committing report shuffle result is failed to "
+            "Committing shuffle result is failed to "
                 + ssi
                 + " for appId["
                 + appId
