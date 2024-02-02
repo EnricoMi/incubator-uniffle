@@ -69,6 +69,7 @@ import org.apache.uniffle.common.config.RssConf;
 import org.apache.uniffle.common.exception.RssException;
 import org.apache.uniffle.common.exception.RssFetchFailedException;
 import org.apache.uniffle.common.rpc.GrpcServer;
+import org.apache.uniffle.common.util.Constants;
 import org.apache.uniffle.common.util.JavaUtils;
 import org.apache.uniffle.common.util.RetryUtils;
 import org.apache.uniffle.common.util.RssUtils;
@@ -587,7 +588,7 @@ public class RssShuffleManager extends RssShuffleManagerBase {
     Map<ShuffleServerInfo, Set<Integer>> serverToPartitions =
         RssUtils.generateServerToPartitions(requirePartitionToServers);
     long start = System.currentTimeMillis();
-    Roaring64NavigableMap blockIdBitmap =
+    Roaring64NavigableMap allBlockIdBitmap =
         getShuffleResultForMultiPart(
             clientType,
             serverToPartitions,
@@ -598,7 +599,7 @@ public class RssShuffleManager extends RssShuffleManagerBase {
         "Get shuffle blockId cost "
             + (System.currentTimeMillis() - start)
             + " ms, and get "
-            + blockIdBitmap.getLongCardinality()
+            + allBlockIdBitmap.getLongCardinality()
             + " blockIds for shuffleId["
             + shuffleId
             + "], startPartition["
@@ -606,6 +607,34 @@ public class RssShuffleManager extends RssShuffleManagerBase {
             + "], endPartition["
             + endPartition
             + "]");
+
+    // filter for those blockIds that are within [startMapIndex,endMapIndex)
+    Roaring64NavigableMap blockIdBitmap;
+    if (startMapIndex == 0 && endMapIndex == Integer.MAX_VALUE) {
+      blockIdBitmap = allBlockIdBitmap;
+    } else {
+      blockIdBitmap = Roaring64NavigableMap.bitmapOf();
+      allBlockIdBitmap.stream()
+          .forEach(
+              blockId -> {
+                int mapIndex = (int) (blockId & Constants.MAX_TASK_ATTEMPT_ID);
+                if (mapIndex >= startMapIndex && mapIndex < endMapIndex) {
+                  blockIdBitmap.add(blockId);
+                }
+              });
+      if (allBlockIdBitmap.getLongCardinality() != blockIdBitmap.getLongCardinality()) {
+        LOG.info(
+            "Filtered blockIds by mapIndex["
+                + startMapIndex
+                + ","
+                + endMapIndex
+                + ") range from "
+                + allBlockIdBitmap.getLongCardinality()
+                + " to "
+                + blockIdBitmap.getLongCardinality()
+                + " blockIds");
+      }
+    }
 
     start = System.currentTimeMillis();
     Roaring64NavigableMap taskIdBitmap =
