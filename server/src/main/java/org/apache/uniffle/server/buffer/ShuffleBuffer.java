@@ -347,7 +347,7 @@ public class ShuffleBuffer {
       if (!foundBlockId) {
         // find lastBlockId
         if (block.getBlockId() == lastBlockId
-            && expectedTaskIds.contains(block.getTaskAttemptId())) {
+            && (expectedTaskIds == null || expectedTaskIds.contains(block.getTaskAttemptId()))) {
           foundBlockId = true;
         }
         continue;
